@@ -1,5 +1,6 @@
-import type { Guild, User } from "@/types/models";
+import type { DiscordLoginResponse, Guild, User } from "@/types/models";
 import { atom } from "jotai";
+import type { DiscordUser } from "./discord";
 
 /**
  * These are atoms that hold global state for the application.
@@ -7,6 +8,7 @@ import { atom } from "jotai";
  */
 const userAtom = atom<User | undefined>(undefined);
 const guildAtom = atom<Guild | undefined>(undefined);
-const discordAuthAtom = atom<string | undefined>(undefined);
+const discordTokenAtom = atom<DiscordLoginResponse | undefined>(undefined);
+const discordUserAtom = atom<DiscordUser | undefined>(undefined);
 
-export { userAtom, guildAtom, discordAuthAtom };
+export { userAtom, guildAtom, discordTokenAtom, discordUserAtom };

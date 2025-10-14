@@ -49,3 +49,9 @@ export type Reaction = {
   roleName: string;
   messageId: number;
 };
+
+export type DiscordLoginResponse = {
+    success: string,
+    token: string
+}
+    
