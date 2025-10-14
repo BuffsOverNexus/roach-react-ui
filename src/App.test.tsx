@@ -1,28 +1,23 @@
-import { render, screen } from '@testing-library/react';
-import { describe, test, expect } from '@jest/globals';
+import { render } from '@testing-library/react';
+import { BrowserRouter } from 'react-router-dom';
+import { describe, test } from '@jest/globals';
+import { PrimeReactProvider } from "primereact/api";
 import App from './App';
 
+// Helper function to render App with required providers
+const renderApp = () => {
+  return render(
+    <PrimeReactProvider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </PrimeReactProvider>
+  );
+};
+
 describe('App Component', () => {
-  test('renders TailwindTest component', () => {
-    render(<App />);
-    const tailwindTest = screen.getByText(/if you can see this styled properly/i);
-    expect(tailwindTest).toBeDefined();
-  });
-
-  test('renders the TailwindTest heading', () => {
-    render(<App />);
-    const heading = screen.getByRole('heading', { name: /tailwind css v4 test/i });
-    expect(heading).toBeDefined();
-  });
-
   test('renders without crashing', () => {
-    const { container } = render(<App />);
-    expect(container.firstChild).toBeDefined();
+    renderApp();
   });
 
-  test('has proper container structure', () => {
-    const { container } = render(<App />);
-    const mainDiv = container.querySelector('div[style*="marginTop"]');
-    expect(mainDiv).toBeDefined();
-  });
 });

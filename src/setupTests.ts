@@ -8,6 +8,23 @@ import '@testing-library/jest-dom';
   disconnect(): void {}
 };
 
+// Mock TextEncoder/TextDecoder for React Router
+if (typeof (globalThis as any).TextEncoder === 'undefined') {
+  (globalThis as any).TextEncoder = class {
+    encode(str: string) {
+      return new Uint8Array([...str].map(c => c.charCodeAt(0)));
+    }
+  };
+}
+
+if (typeof (globalThis as any).TextDecoder === 'undefined') {
+  (globalThis as any).TextDecoder = class {
+    decode(bytes: Uint8Array) {
+      return String.fromCharCode(...Array.from(bytes));
+    }
+  };
+}
+
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
