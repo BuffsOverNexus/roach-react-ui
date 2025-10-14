@@ -14,6 +14,7 @@ interface EnvironmentConfig {
   // API Configuration
   apiBaseUrl: string;
   botUrl: string;
+  oauthBaseUrl: string;
   
   // Auth Configuration
   nextAuthSecret: string;
@@ -43,11 +44,12 @@ const env: EnvironmentConfig = {
   environment: (import.meta.env.VITE_ENVIRONMENT || 'development') as 'development' | 'production' | 'test',
   isDevelopment: import.meta.env.VITE_ENVIRONMENT !== 'production',
   isProduction: import.meta.env.VITE_ENVIRONMENT === 'production',
+  oauthBaseUrl: import.meta.env.VITE_OAUTH_BASE_URL || 'http://localhost:3000',
 };
 
 // Validation helper to ensure required environment variables are set
 export const validateEnvironment = (): void => {
-  const required = ['tenantName', 'apiBaseUrl'] as const;
+  const required = ['tenantName', 'apiBaseUrl', 'oauthBaseUrl'] as const;
   const missing: string[] = [];
   
   required.forEach((key) => {

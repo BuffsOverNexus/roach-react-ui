@@ -15,7 +15,7 @@ type AxiosError<T = any> = {
   name: string;
 };
 
-const API_BASE = env.apiBaseUrl;
+const API_BASE = env.oauthBaseUrl;
 
 // Discord API types
 export interface DiscordUser {
