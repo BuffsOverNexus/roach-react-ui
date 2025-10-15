@@ -1,5 +1,6 @@
 import { discordUserAtom } from "@/utils/atoms";
 import useDiscordAuth from "@/utils/discord";
+import { formatDiscordUsername, getDiscordAvatarUrl } from "@/utils/common";
 import { useAtom } from "jotai";
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
@@ -13,11 +14,21 @@ function HeaderAccountComponent() {
         {discordUser ? (
             <Button
               onClick={() => navigate("/account")}
-              label="My Account"
               size="small"
-              icon="pi pi-user"
               text
-            />
+              severity="info"
+              className="!text-xl"
+              style={{ fontSize: '1.25rem' }}
+            >
+              <div className="flex items-center gap-2">
+                <img 
+                  src={getDiscordAvatarUrl(discordUser.id, discordUser.avatar, 32)} 
+                  alt={`${discordUser.username}'s avatar`}
+                  className="w-8 h-8 rounded-full"
+                />
+                <span>{formatDiscordUsername(discordUser.username).toUpperCase()}</span>
+              </div>
+            </Button>
         ) : (
           <Button
             onClick={() => discord.login()}

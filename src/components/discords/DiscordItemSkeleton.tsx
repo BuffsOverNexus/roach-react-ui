@@ -2,7 +2,7 @@ import { Skeleton } from "primereact/skeleton";
 
 function DiscordItemSkeleton() {
   return (
-    <div className="flex items-center justify-between p-4 border-b">
+    <div className="flex items-center justify-between p-4">
       {/* Left side: Avatar and Name Skeleton */}
       <div className="flex items-center gap-3">
         <Skeleton shape="circle" size="4rem" />
