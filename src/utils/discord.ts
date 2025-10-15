@@ -71,7 +71,7 @@ export const useDiscordAuth = (): UseDiscordAuthReturn => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [tenantExists, setTenantExists] = useState<boolean | null>(null);
-  const [token, setToken] = useState<string | null>(
+  const [_token, setToken] = useState<string | null>(
     localStorage.getItem("discord_token")
   );
   const tenantName = env.tenantName;

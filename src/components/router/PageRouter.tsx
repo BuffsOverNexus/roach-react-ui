@@ -7,6 +7,7 @@ import Reactions from "@/pages/Reactions";
 import Setup from "@/pages/Setup";
 import LoginSuccess from "@/pages/LoginSuccess";
 import Account from "@/pages/Account";
+import IntegrateDiscord from "@/pages/IntegrateDiscord";
 
 function PageRouter() {
     return (
@@ -20,6 +21,7 @@ function PageRouter() {
         <Route path="/login/success" element={<LoginSuccess />} />
         <Route path="/setup" element={<Setup />} />
         <Route path="/account" element={<Account />} />
+        <Route path="/discords/integrate/:discordId" element={<IntegrateDiscord />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>

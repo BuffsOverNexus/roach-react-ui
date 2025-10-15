@@ -1,5 +1,3 @@
-import { Message } from "primereact/message";
-
 function DiscordsDataViewHeader() {
   return (
     <div className="text-left">

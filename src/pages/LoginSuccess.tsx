@@ -1,8 +1,10 @@
 import { useAtom } from "jotai";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { discordTokenAtom, discordUserAtom } from "@utils/atoms";
 import { getUser } from "@/utils/discord";
+import { Message } from "primereact/message";
+import { userApiService } from "@/api/userApi";
 
 function useQuery() {
     return new URLSearchParams(useLocation().search);
@@ -18,10 +20,7 @@ const LoginSuccess = () => {
 
     if (!success || !token) {
         return (
-            <div>
-                <h1>Login Failed</h1>
-                <p>Missing required query parameters.</p>
-            </div>
+            <Message severity="error" text="An error occurred when logging you in. Try again or contact the server owner." />
         );
     }
 
@@ -34,6 +33,13 @@ const LoginSuccess = () => {
                 // Fetch user information from Discord API
                 const userInfo = await getUser();
                 setDiscordUser(userInfo.user);
+
+                // Validate if the user exists in the backend
+                const user = await userApiService().getUser(userInfo.user.id);
+                if (!user) {
+                    // If user does not exist, create a new user
+                    await userApiService().createUser(userInfo.user.id, userInfo.user.username);
+                }
                 router("/account");
             } catch (error) {
                 console.error('Failed to fetch user:', error);
@@ -47,10 +53,7 @@ const LoginSuccess = () => {
     }, [success, token, setDiscordToken]);
 
     return (
-        <div>
-            <h1>Login Success</h1>
-            <p>You have successfully logged in!</p>
-        </div>
+        <Message severity="success" text="Login successful! If you are new, your account has been created." />
     );
 };
 

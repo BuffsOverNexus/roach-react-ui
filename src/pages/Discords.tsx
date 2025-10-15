@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { DataView } from "primereact/dataview";
 import DiscordsDataViewHeader from "@/components/discords/DiscordsDataViewHeader";
 import DiscordList from "@/components/discords/DiscordList";
+import PageBreadcrumb from "@/components/navigation/PageBreadcrumb";
 import { roachDiscordApiService } from "@/api/roachDiscordApi";
 import type { DiscordGuild } from "@/types/api";
 import { useNavigate } from "react-router-dom";
@@ -23,8 +24,8 @@ function Discords() {
         // Fetch the list of Discords from the API
         const fetchDiscords = async () => {
             setLoading(true);
-            // Add 2 second delay
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            // Add 1 second delay
+            await new Promise(resolve => setTimeout(resolve, 1000));
             const response: DiscordGuild[] = await roachDiscordApiService.getUserManagedGuilds(discordUser.id);
             // You may want to set the discords state here if needed
             setDiscords(response);
@@ -39,6 +40,7 @@ function Discords() {
 
     return (
       <div>
+        <PageBreadcrumb showHome={true} />
         <DataView
           value={loading ? [1, 2, 3, 4, 5] : discords}
           listTemplate={listTemplate}

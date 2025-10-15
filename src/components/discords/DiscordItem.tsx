@@ -2,16 +2,27 @@ import { Button } from "primereact/button";
 import { Tag } from "primereact/tag";
 import { Avatar } from "primereact/avatar";
 import type { DiscordGuild } from "@/types/api";
+import { useNavigate } from "react-router-dom";
 
 interface DiscordItemProps {
     discord: DiscordGuild;
 }
 
 function DiscordItem({ discord }: DiscordItemProps) {
+    const router = useNavigate();
+
+    function handleManageClick(discord: DiscordGuild) {
+        // Navigate to the manage page for the specific Discord guild
+        router(`/messages/${discord.id}`);
+    }
+    function handleSetupClick(discord: DiscordGuild) {
+        // Navigate to the setup page for the specific Discord guild
+        router(`/discords/integrate/${discord.id}`);
+    }
     return (
         <div
             key={discord.id}
-            className="flex items-center justify-between p-4 border-b"
+            className="flex items-center justify-between p-4"
         >
             {/* Left side: Avatar and Name */}
             <div className="flex items-center gap-3">
@@ -32,12 +43,14 @@ function DiscordItem({ discord }: DiscordItemProps) {
                     <Button
                         label="Manage"
                         icon="pi pi-pencil"
+                        onClick={() => handleManageClick(discord)}
                     />
                 ) : (
                     <Button
                         label="Setup"
                         icon="pi pi-plus-circle"
                         severity="success"
+                        onClick={() => handleSetupClick(discord)}
                     />
                 )}
             </div>
