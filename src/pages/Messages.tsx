@@ -90,7 +90,7 @@ function Messages() {
     };
 
     return (
-        <div className="pt-4">
+        <div>
             {/* Breadcrumb Navigation */}
             <PageBreadcrumb items={[{ label: 'Categories' }]} />
             
