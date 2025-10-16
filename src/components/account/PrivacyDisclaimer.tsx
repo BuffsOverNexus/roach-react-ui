@@ -2,7 +2,7 @@ import { Card } from "primereact/card";
 
 function PrivacyDisclaimer() {
     return (
-        <Card className="p-4 border-l-4 border-l-blue-400 mb-6">
+        <Card className="p-4 border-l-4 text-left border-l-blue-400 mb-6">
             <div className="flex items-start gap-3">
                 <i className="pi pi-info-circle text-blue-400 text-lg mt-1" />
                 <div>

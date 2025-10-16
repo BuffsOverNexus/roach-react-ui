@@ -1,7 +1,6 @@
-import { useAtom } from "jotai";
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { discordTokenAtom, discordUserAtom } from "@utils/atoms";
+import { useSession } from "@/utils/useSession";
 import { getUser } from "@/utils/discord";
 import { Message } from "primereact/message";
 import { userApiService } from "@/api/userApi";
@@ -11,12 +10,11 @@ function useQuery() {
 }
 
 const LoginSuccess = () => {
-    const [_, setDiscordToken] = useAtom(discordTokenAtom);
+    const session = useSession();
     const router = useNavigate();
     const query = useQuery();
     const success = query.get("success");
     const token = query.get("token");
-    const [discordUser, setDiscordUser] = useAtom(discordUserAtom);
 
     if (!success || !token) {
         return (
@@ -24,15 +22,16 @@ const LoginSuccess = () => {
         );
     }
 
-    // Save this information to an atom
+    // Save this information using session management
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                setDiscordToken({ success, token });
+                // Update token using session management
+                session.updateDiscordToken({ success, token });
 
                 // Fetch user information from Discord API
                 const userInfo = await getUser();
-                setDiscordUser(userInfo.user);
+                session.updateDiscordUser(userInfo.user);
 
                 // Validate if the user exists in the backend
                 const user = await userApiService().getUser(userInfo.user.id);
@@ -47,10 +46,10 @@ const LoginSuccess = () => {
         };
         
         // Only fetch if we haven't already fetched the user
-        if (!discordUser) {
+        if (!session.discordUser) {
             fetchUser();
         }
-    }, [success, token, setDiscordToken]);
+    }, [success, token, session, router]);
 
     return (
         <Message severity="success" text="Login successful! If you are new, your account has been created." />

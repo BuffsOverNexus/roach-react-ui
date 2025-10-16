@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { env } from "@utils/env";
-import { getDefaultStore } from "jotai";
-import { discordTokenAtom } from "@utils/atoms";
+import { useSession } from "@utils/useSession";
 
 // Axios error type for older versions of axios
 type AxiosError<T = any> = {
@@ -71,14 +70,41 @@ export const useDiscordAuth = (): UseDiscordAuthReturn => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [tenantExists, setTenantExists] = useState<boolean | null>(null);
-  const [_token, setToken] = useState<string | null>(
-    localStorage.getItem("discord_token")
-  );
+  
+  // Use the new session management
+  const session = useSession();
   const tenantName = env.tenantName;
 
   if (!tenantName) {
     throw new Error("Tenant name is not configured in environment variables");
   }
+
+  // Auto-fetch user data when we have a token
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (session.discordToken?.token && !session.discordUser) {
+        try {
+          setIsLoading(true);
+          const userData = await getUser();
+          session.updateDiscordUser(userData.user);
+          setError(null);
+        } catch (err) {
+          console.error("Failed to fetch user data:", err);
+          setError(err instanceof Error ? err.message : "Failed to fetch user data");
+          // If token is invalid, logout
+          if (err instanceof Error && err.message.includes("expired")) {
+            session.logout();
+          }
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [session.discordToken, session.discordUser, session]);
 
   // Check for OAuth callback parameters on component mount
   useEffect(() => {
@@ -88,9 +114,12 @@ export const useDiscordAuth = (): UseDiscordAuthReturn => {
     const callbackToken = urlParams.get("token");
 
     if (success && callbackToken) {
-      // Successful OAuth callback
-      setToken(callbackToken);
-      localStorage.setItem("discord_token", callbackToken);
+      // This is now handled by useSession hook, but keep for backwards compatibility
+      const tokenData = {
+        success: "true",
+        token: callbackToken,
+      };
+      session.updateDiscordToken(tokenData);
       // Clean up URL
       window.history.replaceState({}, document.title, window.location.pathname);
     } else if (error) {
@@ -99,7 +128,7 @@ export const useDiscordAuth = (): UseDiscordAuthReturn => {
       // Clean up URL
       window.history.replaceState({}, document.title, window.location.pathname);
     }
-  }, []);
+  }, [session]);
 
   
   const createTenant = async (
@@ -185,19 +214,27 @@ export const useDiscordAuth = (): UseDiscordAuthReturn => {
 
   const logout = (): void => {
     setUser(null);
-    setToken(null);
-    localStorage.removeItem("discord_token");
+    session.logout(); // This now clears all persisted data
     setError(null);
   };
 
   const refetch = async (): Promise<void> => {
+    if (session.discordToken?.token) {
+      try {
+        const userData = await getUser();
+        session.updateDiscordUser(userData.user);
+      } catch (err) {
+        console.error("Failed to refetch user data:", err);
+        setError(err instanceof Error ? err.message : "Failed to refetch user data");
+      }
+    }
   };
 
   return {
     user,
     isLoading,
     error,
-    isAuthenticated: !!user,
+    isAuthenticated: session.isLoggedIn,
     login,
     logout,
     refetch,
@@ -241,16 +278,16 @@ let cachedUserResponse: DirectDiscordUserResponse | null = null;
 const RATE_LIMIT_MS = 5000; // 5 seconds between requests
 
 /**
- * Get user information and guilds using the token stored in discordTokenAtom
+ * Get user information and guilds using the token stored in localStorage
  * This function calls Discord's API directly to ensure we get the correct user's data
  * @returns Promise containing the authenticated user's data and guilds
  * @throws Will throw an error if no token is available or if the API request fails
  */
 export const getUser = async (): Promise<DirectDiscordUserResponse> => {
-  const store = getDefaultStore();
-  const discordTokenData = store.get(discordTokenAtom);
-
-  if (!discordTokenData?.token) {
+  // Get token from session storage
+  const tokenData = JSON.parse(localStorage.getItem('roach-discord-token') || '{}');
+  
+  if (!tokenData.value?.token) {
     throw new Error("No Discord token available. Please login first.");
   }
 
@@ -265,12 +302,12 @@ export const getUser = async (): Promise<DirectDiscordUserResponse> => {
     const [userResponse] = await Promise.all([
       axios.get<DiscordUser>("https://discord.com/api/v10/users/@me", {
         headers: {
-          Authorization: `Bearer ${discordTokenData.token}`,
+          Authorization: `Bearer ${tokenData.value.token}`,
         },
       }),
       // axios.get<DiscordGuild[]>("https://discord.com/api/v10/users/@me/guilds", {
       //   headers: {
-      //     Authorization: `Bearer ${discordTokenData.token}`,
+      //     Authorization: `Bearer ${tokenData.value.token}`,
       //   },
       // }),
     ]);

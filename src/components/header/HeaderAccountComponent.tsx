@@ -1,6 +1,6 @@
 import { discordUserAtom } from "@/utils/atoms";
 import useDiscordAuth from "@/utils/discord";
-import { formatDiscordUsername, getDiscordAvatarUrl } from "@/utils/common";
+import { formatDiscordUsername, getDiscordAvatarUrl } from "@/utils/discord";
 import { useAtom } from "jotai";
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
@@ -26,7 +26,7 @@ function HeaderAccountComponent() {
                   alt={`${discordUser.username}'s avatar`}
                   className="w-8 h-8 rounded-full"
                 />
-                <span>{formatDiscordUsername(discordUser.username).toUpperCase()}</span>
+                <span>{formatDiscordUsername(discordUser).toUpperCase()}</span>
               </div>
             </Button>
         ) : (
