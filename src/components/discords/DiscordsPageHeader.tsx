@@ -8,7 +8,7 @@ function DiscordsPageHeader({ loading }: DiscordsPageHeaderProps) {
     if (loading) {
         return (
             <PageHeader
-                title="Your Discords"
+                title="My Discords"
                 subtitle=""
                 loading={true}
             />
@@ -17,7 +17,7 @@ function DiscordsPageHeader({ loading }: DiscordsPageHeaderProps) {
 
     return (
         <PageHeader
-            title="Your Discords"
+            title="My Discords"
             subtitle="Note: You must be the owner or have administrator role to setup a Discord."
         />
     );
