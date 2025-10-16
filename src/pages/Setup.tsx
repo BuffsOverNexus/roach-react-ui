@@ -99,20 +99,20 @@ function Setup() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-5xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-6 sm:py-8 md:py-12">
         {/* Header Section */}
-        <div className="text-center mb-16">
-          <div className="flex justify-center items-center mb-6">
-            <img src={logoImage} alt="Roach Logo" className="h-16 w-16 mr-4" />
-            <div className="text-left">
-              <h1 className="text-4xl font-bold text-white mb-1">
+        <div className="text-center mb-8 md:mb-16">
+          <div className="flex flex-col sm:flex-row justify-center items-center mb-4 md:mb-6 space-y-3 sm:space-y-0">
+            <img src={logoImage} alt="Roach Logo" className="h-12 w-12 sm:h-16 sm:w-16 sm:mr-4" />
+            <div className="text-center sm:text-left">
+              <h1 className="text-2xl sm:text-4xl font-bold text-white mb-1">
                 Setup Guide
               </h1>
-              <p className="text-lg text-gray-300">First Time Roach Setup</p>
+              <p className="text-base sm:text-lg text-gray-300">First Time Roach Setup</p>
             </div>
           </div>
 
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-6">
+          <p className="text-base sm:text-xl text-gray-300 max-w-3xl mx-auto mb-4 md:mb-6 px-4">
             Follow these simple steps to get Roach up and running on your
             Discord server. The entire process takes less than 5 minutes!
           </p>
@@ -120,57 +120,58 @@ function Setup() {
           <Badge
             value="5 Easy Steps"
             severity="info"
-            className="text-sm px-3 py-1"
+            className="text-xs sm:text-sm px-2 py-1 sm:px-3"
           />
         </div>
 
         {/* Setup Steps */}
-        <div className="space-y-8">
+        <div className="space-y-6 md:space-y-8">
           {setupSteps.map((step, index) => (
             <Card
               key={index}
               className="bg-gray-800 border-gray-700 hover:shadow-lg transition-shadow duration-300"
             >
-              <div className="p-6">
-                <div className="flex items-start space-x-6">
+              <div className="p-4 md:p-6">
+                {/* Mobile Layout: Stack vertically */}
+                <div className="flex flex-col sm:flex-row sm:items-start space-y-4 sm:space-y-0 sm:space-x-4 md:space-x-6">
                   {/* Step Number */}
-                  <div className="flex-shrink-0">
-                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold text-lg">
+                  <div className="flex-shrink-0 self-center sm:self-start">
+                    <div className="inline-flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold text-base sm:text-lg">
                       {step.step}
                     </div>
                   </div>
 
                   {/* Content */}
                   <div className="flex-1">
-                    <div className="flex items-center mb-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center mb-3 space-y-2 sm:space-y-0">
                       <i
-                        className={`${step.icon} ${step.color} text-2xl mr-3`}
+                        className={`${step.icon} ${step.color} text-xl sm:text-2xl mr-0 sm:mr-3 self-center sm:self-start`}
                       />
-                      <h3 className="text-2xl font-bold text-white">
+                      <h3 className="text-xl sm:text-2xl font-bold text-white text-center sm:text-left">
                         {step.title}
                       </h3>
                     </div>
 
-                    <p className="text-gray-300 text-lg mb-4 leading-relaxed">
+                    <p className="text-gray-300 text-base sm:text-lg mb-4 leading-relaxed text-center sm:text-left">
                       {step.description}
                     </p>
 
                     {/* Action Button */}
                     {step.action && (
-                      <div className="mb-4">
+                      <div className="mb-4 flex justify-center sm:justify-start">
                         {step.action.isRoachButton ? (
                           <Button
                             severity="warning"
                             size="large"
-                            className="px-6 py-3 font-semibold flex items-center"
+                            className="px-4 py-2 sm:px-6 sm:py-3 font-semibold flex items-center text-sm sm:text-base"
                             onClick={() => handleActionClick(step.action)}
                           >
                             <img
                               src={logoImage}
                               alt="Roach"
-                              className="h-5 w-5 mr-2"
+                              className="h-4 w-4 sm:h-5 sm:w-5 mr-2"
                             />
-                            {step.action.label}
+                            <span className="truncate">{step.action.label}</span>
                           </Button>
                         ) : (
                           <Button
@@ -178,7 +179,7 @@ function Setup() {
                             icon={step.action.icon}
                             severity={step.action.internal ? "success" : "info"}
                             size="large"
-                            className="px-6 py-3 font-semibold"
+                            className="px-4 py-2 sm:px-6 sm:py-3 font-semibold text-sm sm:text-base"
                             onClick={() => handleActionClick(step.action)}
                           />
                         )}
@@ -187,8 +188,8 @@ function Setup() {
 
                     {/* Step Details */}
                     {step.details && (
-                      <div className="bg-gray-700 rounded-lg p-4">
-                        <h4 className="text-white font-semibold mb-3 flex items-center">
+                      <div className="bg-gray-700 rounded-lg p-3 sm:p-4">
+                        <h4 className="text-white font-semibold mb-3 flex items-center justify-center sm:justify-start">
                           <i className="pi pi-info-circle text-blue-400 mr-2" />
                           Quick Steps:
                         </h4>
@@ -196,10 +197,10 @@ function Setup() {
                           {step.details.map((detail, detailIndex) => (
                             <li
                               key={detailIndex}
-                              className="flex items-center text-gray-300"
+                              className="flex items-start text-gray-300 text-sm sm:text-base"
                             >
-                              <i className="pi pi-angle-right text-orange-400 mr-2 text-sm" />
-                              {detail}
+                              <i className="pi pi-angle-right text-orange-400 mr-2 text-xs sm:text-sm mt-1 flex-shrink-0" />
+                              <span>{detail}</span>
                             </li>
                           ))}
                         </ul>
