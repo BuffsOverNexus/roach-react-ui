@@ -198,8 +198,7 @@ export function useMessages(discordId: string | undefined) {
             
             // Create new message
             const newMessage = await messageApiService().createMessage(
-                newMessageSubject.trim(),
-                discordId!
+                discordId!, newMessageSubject.trim()
             );
             
             // Add new message to local state
