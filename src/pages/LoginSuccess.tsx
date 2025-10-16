@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSession } from "@/utils/useSession";
 import { getUser } from "@/utils/discord";
@@ -15,19 +15,33 @@ const LoginSuccess = () => {
     const query = useQuery();
     const success = query.get("success");
     const token = query.get("token");
+    const [isProcessing, setIsProcessing] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     if (!success || !token) {
         return (
-            <Message severity="error" text="An error occurred when logging you in. Try again or contact the server owner." />
+            <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center p-4">
+                <Message severity="error" text="An error occurred when logging you in. Missing credentials. Try again or contact the server owner." />
+            </div>
         );
     }
 
     // Save this information using session management
     useEffect(() => {
+        // Prevent multiple calls
+        if (isProcessing || session.discordUser) {
+            return;
+        }
+
         const fetchUser = async () => {
             try {
-                // Update token using session management
-                session.updateDiscordToken({ success, token });
+                setIsProcessing(true);
+                console.log("LoginSuccess: Processing login for token:", token.substring(0, 10) + "...");
+
+                // Update token using session management (only if not already set)
+                if (!session.discordToken) {
+                    session.updateDiscordToken({ success, token });
+                }
 
                 // Fetch user information from Discord API
                 const userInfo = await getUser();
@@ -39,20 +53,37 @@ const LoginSuccess = () => {
                     // If user does not exist, create a new user
                     await userApiService().createUser(userInfo.user.id, userInfo.user.username);
                 }
-                router("/account");
+
+                console.log("LoginSuccess: User setup complete, redirecting to account");
+                // Add a small delay to ensure state is properly set
+                setTimeout(() => {
+                    router("/account");
+                }, 500);
             } catch (error) {
                 console.error('Failed to fetch user:', error);
+                setError("Failed to complete login process. Please try again.");
+                setIsProcessing(false);
             }
         };
         
-        // Only fetch if we haven't already fetched the user
-        if (!session.discordUser) {
-            fetchUser();
-        }
-    }, [success, token, session, router]);
+        fetchUser();
+    }, [success, token, session, router, isProcessing]);
+
+    if (error) {
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center p-4">
+                <Message severity="error" text={error} />
+            </div>
+        );
+    }
 
     return (
-        <Message severity="success" text="Login successful! If you are new, your account has been created." />
+        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center p-4">
+            <Message 
+                severity="success" 
+                text={isProcessing ? "Processing login..." : "Login successful! Redirecting to your account..."} 
+            />
+        </div>
     );
 };
 

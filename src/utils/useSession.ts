@@ -35,13 +35,19 @@ export const useSession = () => {
     }
   }, []); // Only run once on mount to avoid loops
 
-  // Initialize session from URL params (OAuth callback)
+  // Initialize session from URL params (OAuth callback) - Only on LoginSuccess page
   useEffect(() => {
+    // Only process URL params if we're on the login success page
+    if (window.location.pathname !== '/login/success') {
+      return;
+    }
+
     const urlParams = new URLSearchParams(window.location.search);
     const success = urlParams.get("success");
     const callbackToken = urlParams.get("token");
 
-    if (success && callbackToken) {
+    if (success && callbackToken && !discordToken) {
+      console.log("Processing OAuth callback in session hook");
       // Store the token with proper typing
       const tokenData: DiscordLoginResponse = {
         success: "true",
@@ -53,7 +59,7 @@ export const useSession = () => {
       // Clean up URL
       window.history.replaceState({}, document.title, window.location.pathname);
     }
-  }, [setDiscordToken]);
+  }, [setDiscordToken, discordToken]);
 
   const updateDiscordUser = useCallback((userData: DiscordUser) => {
     setDiscordUser(userData);

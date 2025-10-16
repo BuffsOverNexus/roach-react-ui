@@ -10,17 +10,27 @@ function App() {
   const isTextPage = location.pathname === '/' || location.pathname === '/home' || location.pathname === '/setup';
   const session = useSession();
 
-  // Validate session on app start
+  // Validate session on app start - but not during login process
   useEffect(() => {
+    // Don't validate session during login process
+    if (location.pathname === '/login/success') {
+      return;
+    }
+
     if (!session.hasValidToken && session.discordUser) {
       console.log('Session expired, logging out...');
       session.logout();
     }
-  }, []); // Empty dependency array to only run once on mount
+  }, [location.pathname]); // Depend on pathname to avoid interfering with login
 
-  // Periodic session validation (every 5 minutes)
+  // Periodic session validation (every 5 minutes) - but not during login
   useEffect(() => {
     const interval = setInterval(() => {
+      // Don't validate during login process
+      if (location.pathname === '/login/success') {
+        return;
+      }
+
       if (!session.hasValidToken && session.discordUser) {
         console.log('Session expired during periodic check, logging out...');
         session.logout();
@@ -28,7 +38,7 @@ function App() {
     }, 5 * 60 * 1000); // 5 minutes
 
     return () => clearInterval(interval);
-  }, []); // Empty dependency array for the interval
+  }, [location.pathname]); // Include location to respect login state
 
   return (
     <div className="">
