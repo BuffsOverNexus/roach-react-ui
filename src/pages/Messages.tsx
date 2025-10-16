@@ -1,18 +1,16 @@
 import { useParams } from "react-router-dom";
-import { DataView } from "primereact/dataview";
+import { useState } from "react";
 import { Toast } from "primereact/toast";
 import { ConfirmDialog } from "primereact/confirmdialog";
-import PageBreadcrumb from "@/components/navigation/PageBreadcrumb";
+import { PageLayout, PageControls } from "@/components/common";
 import MessagesHeader from "@/components/messages/MessagesHeader";
-import MessageItem from "@/components/messages/MessageItem";
-import MessageItemSkeleton from "@/components/messages/MessageItemSkeleton";
-import CreateMessageDialog from "@/components/messages/CreateMessageDialog";
-import EditSubjectDialog from "@/components/messages/EditSubjectDialog";
-import ChannelSelectionDialog from "@/components/messages/ChannelSelectionDialog";
+import MessagesDataView from "@/components/messages/MessagesDataView";
+import MessagesDialogManager from "@/components/messages/MessagesDialogManager";
 import { useMessages } from "@/hooks/useMessages";
 
 function Messages() {
     const { discordId } = useParams();
+    const [searchValue, setSearchValue] = useState("");
     const {
         // State
         messages,
@@ -21,6 +19,7 @@ function Messages() {
         first,
         setFirst,
         rows,
+        setRows,
         toast,
         
         // Create dialog
@@ -61,21 +60,10 @@ function Messages() {
         handleRegenerateAll,
     } = useMessages(discordId);
 
-    const messageItemTemplate = (message: any) => {
-        if (loading) {
-            return <MessageItemSkeleton />;
-        }
-        
-        return (
-            <MessageItem
-                message={message}
-                loading={loading}
-                onEdit={handleOpenEditSubjectDialog}
-                onPublish={handleRegenerateMessage}
-                onDelete={handleDeleteMessage}
-            />
-        );
-    };
+    // Filter messages based on search
+    const filteredMessages = messages.filter(message =>
+        message.subject.toLowerCase().includes(searchValue.toLowerCase())
+    );
 
     const handleCreateKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter' && !submitting && newMessageSubject.trim().length >= 10) {
@@ -89,52 +77,46 @@ function Messages() {
         }
     };
 
+    const breadcrumbItems = [{ label: 'Categories' }];
+
     return (
-        <div>
-            {/* Breadcrumb Navigation */}
-            <PageBreadcrumb items={[{ label: 'Categories' }]} />
-            
+        <PageLayout breadcrumbItems={breadcrumbItems}>
             <Toast ref={toast} />
             <ConfirmDialog />
             
-            {/* Create Message Dialog */}
-            <CreateMessageDialog
-                visible={showCreateDialog}
-                subject={newMessageSubject}
+            <MessagesDialogManager
+                // Create dialog props
+                showCreateDialog={showCreateDialog}
+                newMessageSubject={newMessageSubject}
                 submitting={submitting}
                 touched={touched}
-                onHide={handleCloseCreateDialog}
+                onCreateHide={handleCloseCreateDialog}
                 onSubjectChange={setNewMessageSubject}
                 onSubjectBlur={() => setTouched(true)}
-                onSubmit={handleSubmitNewMessage}
-                onKeyDown={handleCreateKeyDown}
-            />
-            
-            {/* Edit Subject Dialog */}
-            <EditSubjectDialog
-                visible={showEditSubjectDialog}
-                subject={editSubject}
-                updating={updatingSubject}
-                touched={editSubjectTouched}
-                onHide={handleCloseEditSubjectDialog}
-                onSubjectChange={setEditSubject}
-                onSubjectBlur={() => setEditSubjectTouched(true)}
-                onSave={handleUpdateSubject}
-                onKeyDown={handleEditKeyDown}
-            />
-            
-            {/* Channel Selection Dialog */}
-            <ChannelSelectionDialog
-                visible={showChannelDialog}
+                onCreateSubmit={handleSubmitNewMessage}
+                onCreateKeyDown={handleCreateKeyDown}
+                
+                // Edit dialog props
+                showEditSubjectDialog={showEditSubjectDialog}
+                editSubject={editSubject}
+                updatingSubject={updatingSubject}
+                editSubjectTouched={editSubjectTouched}
+                onEditHide={handleCloseEditSubjectDialog}
+                onEditSubjectChange={setEditSubject}
+                onEditSubjectBlur={() => setEditSubjectTouched(true)}
+                onEditSave={handleUpdateSubject}
+                onEditKeyDown={handleEditKeyDown}
+                
+                // Channel dialog props
+                showChannelDialog={showChannelDialog}
                 channels={channels}
                 selectedChannelId={selectedChannelId}
-                updating={updatingChannel}
-                onHide={handleCloseChannelDialog}
+                updatingChannel={updatingChannel}
+                onChannelHide={handleCloseChannelDialog}
                 onChannelChange={setSelectedChannelId}
-                onUpdate={handleUpdateChannel}
+                onChannelUpdate={handleUpdateChannel}
             />
             
-            {/* Header */}
             <MessagesHeader
                 loading={loading}
                 discord={discord}
@@ -144,21 +126,26 @@ function Messages() {
                 onCreate={handleCreateMessage}
             />
 
-            {/* Messages DataView */}
-            <DataView
-                value={loading ? [1, 2, 3, 4, 5] : messages}
-                itemTemplate={messageItemTemplate}
-                layout="list"
-                emptyMessage="No messages found"
-                loading={false}
-                className="mt-4"
-                paginator={!loading}
+            <PageControls
+                searchValue={searchValue}
+                onSearchChange={setSearchValue}
+                searchPlaceholder="Search message subjects..."
+                rows={rows}
+                onRowsChange={setRows}
+                disabled={loading}
+            />
+
+            <MessagesDataView
+                messages={filteredMessages}
+                loading={loading}
                 rows={rows}
                 first={first}
                 onPage={(e) => setFirst(e.first)}
-                rowsPerPageOptions={[5, 10, 20]}
+                onEdit={handleOpenEditSubjectDialog}
+                onPublish={handleRegenerateMessage}
+                onDelete={handleDeleteMessage}
             />
-        </div>
+        </PageLayout>
     );
 }
 

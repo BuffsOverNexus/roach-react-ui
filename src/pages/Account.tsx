@@ -1,6 +1,5 @@
 import { Toast } from "primereact/toast";
 import { ConfirmDialog } from "primereact/confirmdialog";
-import PageBreadcrumb from "@/components/navigation/PageBreadcrumb";
 import PrivacyDisclaimer from "@/components/account/PrivacyDisclaimer";
 import ProfileHeader from "@/components/account/ProfileHeader";
 import DiscordInformation from "@/components/account/DiscordInformation";

@@ -3,15 +3,19 @@ import { Tag } from "primereact/tag";
 import { Avatar } from "primereact/avatar";
 import type { DiscordGuild } from "@/types/api";
 import { useNavigate } from "react-router-dom";
+import { guildAtom } from "@/utils/atoms";
+import { useAtom } from "jotai";
 
 interface DiscordItemProps {
     discord: DiscordGuild;
 }
 
 function DiscordItem({ discord }: DiscordItemProps) {
+    const [, setCurrentGuild] = useAtom(guildAtom);
     const router = useNavigate();
 
     function handleManageClick(discord: DiscordGuild) {
+        setCurrentGuild(discord);
         // Navigate to the manage page for the specific Discord guild
         router(`/messages/${discord.id}`);
     }

@@ -1,54 +1,14 @@
-import { discordUserAtom } from "@/utils/atoms";
-import { useAtom } from "jotai";
-import { useEffect, useState } from "react";
-import { DataView } from "primereact/dataview";
-import DiscordsDataViewHeader from "@/components/discords/DiscordsDataViewHeader";
-import DiscordList from "@/components/discords/DiscordList";
-import PageBreadcrumb from "@/components/navigation/PageBreadcrumb";
-import { roachDiscordApiService } from "@/api/roachDiscordApi";
-import type { DiscordGuild } from "@/types/api";
-import { useNavigate } from "react-router-dom";
+import { PageLayout } from "@/components/common";
+import DiscordsDataView from "@/components/discords/DiscordsDataView";
+import { useDiscords } from "@/hooks/useDiscords";
 
 function Discords() {
-    const router = useNavigate();
-    const [discordUser] = useAtom(discordUserAtom);
-    const [discords, setDiscords] = useState<DiscordGuild[]>([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        if (!discordUser) {
-            router("/");
-            return;
-        }
-
-        // Fetch the list of Discords from the API
-        const fetchDiscords = async () => {
-            setLoading(true);
-            // Add 1 second delay
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            const response: DiscordGuild[] = await roachDiscordApiService.getUserManagedGuilds(discordUser.id);
-            // You may want to set the discords state here if needed
-            setDiscords(response);
-            setLoading(false);
-        };
-        fetchDiscords();
-    }, []);
-
-    const listTemplate = () => {
-        return <DiscordList discords={discords} loading={loading} />;
-    }
+    const { discords, loading } = useDiscords();
 
     return (
-      <div>
-        <PageBreadcrumb showHome={true} />
-        <DataView
-          value={loading ? [1, 2, 3, 4, 5] : discords}
-          listTemplate={listTemplate}
-          paginator={!loading && discords.length > 5 ? true : false}
-          rows={5}
-          header={<DiscordsDataViewHeader />}
-        />
-      </div>
+        <PageLayout>
+            <DiscordsDataView discords={discords} loading={loading} />
+        </PageLayout>
     );
 }
 export default Discords;

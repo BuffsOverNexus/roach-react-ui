@@ -1,4 +1,5 @@
-import type { DiscordLoginResponse, Guild, User } from "@/types/models";
+import type { DiscordLoginResponse, User } from "@/types/models";
+import type { DiscordGuild } from "@/types/api";
 import { atom } from "jotai";
 import type { DiscordUser } from "./discord";
 
@@ -7,7 +8,7 @@ import type { DiscordUser } from "./discord";
  * 
  */
 const userAtom = atom<User | undefined>(undefined);
-const guildAtom = atom<Guild | undefined>(undefined);
+const guildAtom = atom<DiscordGuild | undefined>(undefined);
 const discordTokenAtom = atom<DiscordLoginResponse | undefined>(undefined);
 const discordUserAtom = atom<DiscordUser | undefined>(undefined);
 

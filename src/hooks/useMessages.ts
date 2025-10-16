@@ -19,7 +19,7 @@ export function useMessages(discordId: string | undefined) {
     const [discord, setDiscord] = useState<Guild | null>(null);
     const [loading, setLoading] = useState(false);
     const [first, setFirst] = useState(0);
-    const [rows] = useState(5);
+    const [rows, setRows] = useState(5);
     
     // Create dialog state
     const [showCreateDialog, setShowCreateDialog] = useState(false);
@@ -364,6 +364,7 @@ export function useMessages(discordId: string | undefined) {
         first,
         setFirst,
         rows,
+        setRows,
         toast,
         
         // Create dialog
