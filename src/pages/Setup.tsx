@@ -18,73 +18,80 @@ function Setup() {
     {
       step: "1",
       title: "Add Roach to Your Discord Server",
-      description: "Click the button below to invite Roach to your Discord server with the proper permissions.",
+      description:
+        "Click the button below to invite Roach to your Discord server with the proper permissions.",
       icon: "pi pi-plus-circle",
       color: "text-blue-500",
       action: {
         label: "Add Roach To Discord",
         icon: "pi pi-discord",
         isRoachButton: true,
-        url: "https://discord.com/api/oauth2/authorize?client_id=756971852701892648&permissions=268774464&scope=bot"
-      }
+        url: "https://discord.com/api/oauth2/authorize?client_id=756971852701892648&permissions=268773456&scope=bot",
+      },
     },
     {
-      step: "2", 
+      step: "2",
       title: "Position the Roach Role",
-      description: "Move the Roach role above all roles you want to manage. This is crucial for proper functionality.",
+      description:
+        "Move the Roach role above all roles you want to manage. This is crucial for proper functionality.",
       icon: "pi pi-sort-alt",
       color: "text-orange-500",
       details: [
         "Go to Server Settings → Roles",
         "Drag the 'Roach' role above target roles",
         "Roach doesn't need to be at the very top",
-        "Just above the roles you want to manage"
-      ]
+        "Just above the roles you want to manage",
+      ],
     },
     {
       step: "3",
       title: "Create a Channel for Role Messages",
-      description: "Create a text channel where Roach will post role reaction messages (commonly called #roles).",
+      description:
+        "Create a text channel where Roach will post role reaction messages (commonly called #roles).",
       icon: "pi pi-hashtag",
       color: "text-green-500",
       details: [
         "Create a new text channel (e.g., #roles)",
         "Ensure Roach can read and send messages",
         "This is where reaction role messages appear",
-        "You can change the channel anytime"
-      ]
+        "You can change the channel anytime",
+      ],
     },
     {
       step: "4",
       title: "Configure Roles & Emotes",
-      description: "Use this website to create reaction role messages with your desired roles and emotes.",
+      description:
+        "Use this website to create reaction role messages with your desired roles and emotes.",
       icon: "pi pi-cog",
       color: "text-purple-500",
       details: [
         "Add roles and their corresponding emotes",
         "Organize into message categories",
         "Preview before publishing",
-        "Changes are instant in Discord"
-      ]
+        "Changes are instant in Discord",
+      ],
     },
     {
       step: "5",
       title: "Start Managing Roles",
-      description: "You're all set! Manage everything from this website without Discord commands.",
+      description:
+        "You're all set! Manage everything from this website without Discord commands.",
       icon: "pi pi-check-circle",
       color: "text-green-600",
-      action: discordUser ? {
-        label: "Start Creating Role Reactions",
-        icon: "pi pi-arrow-right",
-        internal: true,
-        url: "/discords"
-      } : {
-        label: "Login with Discord",
-        icon: "pi pi-discord",
-        internal: false,
-        loginAction: true
-      }
-    }
+      action: discordUser
+        ? {
+            label: "Start Creating Role Reactions",
+            icon: "pi pi-arrow-right",
+            internal: true,
+            url: "/discords",
+          }
+        : {
+            label: "Login with Discord",
+            icon: "pi pi-discord",
+            internal: false,
+            loginAction: true,
+          },
+    },
   ];
 
   const handleActionClick = (action: any) => {

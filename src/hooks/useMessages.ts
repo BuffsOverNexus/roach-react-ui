@@ -251,7 +251,7 @@ export function useMessages(discordId: string | undefined) {
             setUpdatingSubject(true);
             
             // TODO: Add API call when available
-            // await messageApiService().updateMessage(editingMessage.id.toString(), editSubject.trim());
+            await messageApiService().updateMessage(editingMessage.id.toString(), editSubject.trim());
             
             // For now, update local state
             setMessages(prev => prev.map(msg => 

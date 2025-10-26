@@ -36,7 +36,6 @@ const LoginSuccess = () => {
         const fetchUser = async () => {
             try {
                 setIsProcessing(true);
-                console.log("LoginSuccess: Processing login for token:", token.substring(0, 10) + "...");
 
                 // Update token using session management (only if not already set)
                 if (!session.discordToken) {

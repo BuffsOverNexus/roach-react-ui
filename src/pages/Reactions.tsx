@@ -22,11 +22,6 @@ function Reactions() {
     const messageIdNum = messageId ? parseInt(messageId) : null;
     const guildId = currentGuild?.id ?? null;
 
-    console.log("Reactions page - messageId from URL:", messageId);
-    console.log("Reactions page - messageIdNum:", messageIdNum);
-    console.log("Reactions page - currentGuild:", currentGuild);
-    console.log("Reactions page - guildId:", guildId);
-
     // If we don't have guild context, we can't load roles/emotes
     if (!currentGuild) {
         console.warn("Reactions page: No guild context available. User may have navigated directly to this page.");
